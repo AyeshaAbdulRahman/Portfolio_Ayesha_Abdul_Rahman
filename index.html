@@ -8,11 +8,14 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
         
-        body {
+        html,body {
             font-family: 'Poppins', sans-serif;
             scroll-behavior: smooth;
             background-color: #000;
             color: #fff;
+            cursor: none;
+            max-width: 100%;
+            overflow-x: hidden;
 
         }
 
@@ -93,12 +96,14 @@
             background: #e91e63;
             top: 0;
             bottom: 0;
-            left: 50%;
+            left: 20px;
             margin-left: -3px;
         }
         
         .timeline-container {
-            padding: 10px 40px;
+           
+            padding-left: 60px;
+            padding-right: 20px;
             position: relative;
             width: 100%;
         }
@@ -112,6 +117,7 @@
             border-radius: 50%;
             top: 15px;
             z-index: 1;
+            left: 15px;
         }
         
         .left {
@@ -160,9 +166,198 @@
                 opacity: 0;
             }
         }
+
+        /* Page Loader Styles */
+        .loader-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #000 0%, #1a1a1a 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 9999;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+
+        .loader-container.fade-out {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loader {
+            position: relative;
+            width: 80px;
+            height: 80px;
+        }
+
+        .loader-inner {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            border-top-color: #e91e63;
+            animation: spin 1.5s linear infinite;
+        }
+
+        .loader-inner:nth-child(2) {
+            width: 70%;
+            height: 70%;
+            top: 15%;
+            left: 15%;
+            border-top-color: #ff5858;
+            animation: spin 1.2s linear infinite reverse;
+        }
+
+        .loader-inner:nth-child(3) {
+            width: 40%;
+            height: 40%;
+            top: 30%;
+            left: 30%;
+            border-top-color: #fff;
+            animation: spin 1s linear infinite;
+        }
+
+        .loader-text {
+            margin-top: 30px;
+            color: #fff;
+            font-size: 14px;
+            letter-spacing: 3px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        /* Custom Cursor Styles */
+        .cursor {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #e91e63;
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            transition: transform 0.1s ease;
+            z-index: 9998;
+            mix-blend-mode: difference;
+        }
+
+        .cursor-follower {
+            width: 40px;
+            height: 40px;
+            border: 1px solid rgba(233, 30, 99, 0.3);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            transition: transform 0.3s ease;
+            z-index: 9997;
+        }
+
+        .cursor.active {
+            transform: scale(1.5);
+            background: rgba(233, 30, 99, 0.3);
+        }
+
+        .cursor-follower.active {
+            transform: scale(2);
+            border-color: rgba(233, 30, 99, 0.6);
+        }
+/* Fix timeline card overflow on mobile */
+@media (max-width: 1024px) {
+  .timeline::after {
+    left: 20px; /* keep the line visible on left */
+  }
+
+  .timeline-container {
+    width: 100%;
+    left: 0 !important;    /* remove offset */
+    padding-left: 60px;    /* space for line */
+    padding-right: 20px;
+    margin: 0 auto;
+    display: block;
+  }
+
+  .timeline-container::after {
+    left: 15px;   /* dots align with line */
+    right: auto;
+  }
+
+  /* Force both left/right containers to behave the same */
+  .timeline .left,
+  .timeline .right {
+    left: 0 !important;
+  }
+}
+
+        @media (min-width: 1024px) {
+        .timeline::after {
+            left: 50%;
+        }
+        .timeline-container {
+            padding: 10px 40px;
+        }
+        .left {
+            left: -50%;
+        }
+        .right {
+            left: 50%;
+        }
+        .left::after {
+            right: -12px;
+            left: auto;
+        }
+        .right::after {
+            left: -12px;
+        }
+        /* Fix timeline on mobile */
+        @media (max-width: 1024px) {
+        .timeline::after {
+            left: 20px; /* move line to the left */
+        }
+
+        .timeline-container {
+            width: 100%;
+            left: 0 !important;   /* remove left/right push */
+            padding-left: 60px;   /* space for the timeline line */
+            padding-right: 20px;
+            margin: 0 auto;
+        }
+
+        .timeline-container::after {
+            left: 15px; /* dots align with line */
+            right: auto;
+        }
+        }
+
+}
     </style>
 </head>
 <body>
+    <!-- Page Loader -->
+    <div class="loader-container">
+        <div class="loader">
+            <div class="loader-inner"></div>
+            <div class="loader-inner"></div>
+            <div class="loader-inner"></div>
+        </div>
+        <div class="text-2xl font-bold gradient-text">LOADING PORTFOLIO</div>
+    </div>
+
+    <!-- Custom Cursor -->
+    <div class="cursor"></div>
+    <div class="cursor-follower"></div>
+
     <!-- Navigation -->
     <nav class="fixed w-full bg-black bg-opacity-90 z-50 py-4 shadow-lg">
         <div class="container mx-auto px-6 flex justify-between items-center">
@@ -287,7 +482,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="timeline-container right mb-8">
+                <div class="timeline-container right mb-8" >
                     <div class="content p-6 bg-gray-900 rounded-2xl shadow-lg hover:shadow-xl hover:shadow-pink-500/20 transition-all duration-300 flex flex-col md:flex-row items-center gap-6">
                         <img src="fast.jpg" alt="College admission" class="w-full md:w-1/3 rounded-lg">
                         <div>
@@ -863,6 +1058,66 @@
     <script>
         // Set current year in footer
         document.getElementById('year').textContent = new Date().getFullYear();
+
+        // Page Loader Script
+        window.addEventListener('load', function() {
+            const loaderContainer = document.querySelector('.loader-container');
+            setTimeout(() => {
+                loaderContainer.classList.add('fade-out');
+                setTimeout(() => {
+                    loaderContainer.style.display = 'none';
+                }, 800);
+            }, 1500); // Show loader for at least 1.5 seconds
+        });
+
+        // Custom Cursor Script
+        const cursor = document.querySelector('.cursor');
+        const cursorFollower = document.querySelector('.cursor-follower');
+
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+            
+            setTimeout(() => {
+                cursorFollower.style.left = e.clientX + 'px';
+                cursorFollower.style.top = e.clientY + 'px';
+            }, 100);
+        });
+
+        document.addEventListener('mousedown', () => {
+            cursor.classList.add('active');
+            cursorFollower.classList.add('active');
+        });
+
+        document.addEventListener('mouseup', () => {
+            cursor.classList.remove('active');
+            cursorFollower.classList.remove('active');
+        });
+
+        // Hide cursor when leaving window
+        document.addEventListener('mouseleave', () => {
+            cursor.style.opacity = '0';
+            cursorFollower.style.opacity = '0';
+        });
+
+        document.addEventListener('mouseenter', () => {
+            cursor.style.opacity = '1';
+            cursorFollower.style.opacity = '1';
+        });
+
+        // Add hover effects for interactive elements
+        const interactiveElements = document.querySelectorAll('a, button, input, textarea, .project-card');
+        interactiveElements.forEach(element => {
+            element.addEventListener('mouseenter', () => {
+                cursor.classList.add('active');
+                cursorFollower.classList.add('active');
+            });
+            
+            element.addEventListener('mouseleave', () => {
+                cursor.classList.remove('active');
+                cursorFollower.classList.remove('active');
+            });
+        });
 
         // Mobile menu toggle
         const menuBtn = document.getElementById('menu-btn');
